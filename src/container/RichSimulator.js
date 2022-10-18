@@ -28,7 +28,7 @@ import IconButton from '@material-ui/core/IconButton';
 class RichSimulator extends React.Component {
   constructor(props) {
     super(props);
-    const money = 270000000000
+    const money = 1000000
 
     this.items = require('../static/goods.json')['items'];
     this.items.sort((a, b) => a.price - b.price)
@@ -108,6 +108,18 @@ class RichSimulator extends React.Component {
       clearInterval(this.yuebaoInterval)
     }
   }
+  changeItem = (type_name) => {
+  console.log(type_name)
+//    this.setState({ isMakingProfit: event.target.checked })
+//    if (event.target.checked) {
+//      this.yuebaoInterval = setInterval(() => {
+//        // Your custom logic here
+//        this.makeProfit()
+//      }, this.delay);
+//    } else {
+//      clearInterval(this.yuebaoInterval)
+//    }
+  }
   makeProfit = () => {
     const pps = Math.floor(this.state.balance * 0.00000000079)
     this.setState({ balance: this.state.balance + pps, profitPerSec: pps, money: this.state.money + pps });
@@ -139,7 +151,7 @@ class RichSimulator extends React.Component {
             <List className={classes.shopList}>
 
               <ListSubheader component="div" id="nested-list-subheader">
-                我买的东西 - 有钱人模拟器(lemonjing.com)
+                我买的东西 - 花钱模拟器(lemonjing.com)
           </ListSubheader>
               {
                 this.state.count === 0 ? <Typography className={classes.emptyLabel}>你的购物车空空如也</Typography> : null
@@ -192,22 +204,28 @@ class RichSimulator extends React.Component {
             </IconButton>
             {/* <Button variant='outlined' color='secondary'>买了什么</Button> */}
           </Grid>
+
+
         </Grid>
         <main>
           <Container className={classes.container} maxWidth="md">
             <Paper className={classes.topPaper}>
               <Grid container justify="center" alignItems="center">
                 <Box className={classes.wordsWrapper}>
-                  <Typography variant="h3" className={classes.largewords}>有钱人模拟器</Typography>
-                  <Typography className={classes.footerText}>在有钱人模拟器，你可以体验作为拥有有两千七百亿家产的有钱人是什么感觉，买起来吧！</Typography>
-                  <Typography className={classes.footerText}>仅供图一乐，并不能真的发货。&nbsp;<a href="https://github.com/liust97/jackma-simulator">Github</a> </Typography>
-
-                  <Typography className={classes.smallText}>Inspired by <a href="https://neal.fun/spend/">Spend Bill Gates' Money</a>
+                  <Typography variant="h3" className={classes.largewords}>花钱模拟器</Typography>
+                  <Typography className={classes.footerText}>如何花光这么多钱? bug还是天道? </Typography>
+                  <Typography className={classes.smallText}>Inspired by <a href="https://www.taptap.com/app/241942">花钱模拟器</a>
                   </Typography>
                 </Box>
               </Grid>
             </Paper>
             <Paper className={classes.yuebaoPaper}>
+            <Button variant="outlined" onClick={() => {    this.changeItem('tbw')  }}> 淘宝网</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button variant="outlined" onClick={() => {    this.changeItem('mc')  }}> 买车</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button variant="outlined" onClick={() => {    this.changeItem('mf')  }}> 买房</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button variant="outlined" onClick={() => {    this.changeItem('gxm')  }}> 搞项目</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button variant="outlined" onClick={() => {    this.changeItem('qqg')  }}> 全球购</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button variant="outlined" onClick={() => {    this.changeItem('hs')  }}> 黑市</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <FormControlLabel
                 className={classes.yuebaoLabel}
                 control={
@@ -217,14 +235,13 @@ class RichSimulator extends React.Component {
                     value="checkedB"
                   />
                 }
-                label="把钱存入余额宝"
+                label="憋不住了, 赚钱"
               />
 
               {(isMakingProfit ? <span>每秒收益：{profitPerSec}元</span> : null)}
 
             </Paper>
 
-            <Typography className={classes.smallText}>(品牌、人物仅用于举例，与本站无关；物品价格仅供参考)</Typography>
             <Grid className={classes.cardGrid} container spacing={3}>
               {
                 this.items.map(item => (
@@ -264,7 +281,7 @@ class RichSimulator extends React.Component {
                             target.value = parseInt(document.getElementById(item.name).value) + 1;
                             this.onNumberChange(target)
                           }}>
-                          加入购物车
+                          买一个
                                       </Button>
                       </CardActions>
                     </Card>

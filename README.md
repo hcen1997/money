@@ -1,48 +1,39 @@
-# 有钱人模拟器
+# 钱是什么?
+在公元2022年, 钱可以用来花, 也可以赚来
 
-体验花光有钱人的钱。
+# 功能
 
-有钱人模拟器是一个使用React制作的模拟网上商城应用，使用Material UI作为UI框架。用户可以模拟拥有给定数目的金钱，可以在商城中购买商品，可以将钱存入理财应用中获取收益。
+1. 花钱
+    车/房/淘宝网/黑市/全球购/搞项目
+    放贷/撒币
+2. 赚钱
+    农民/工人/码农/科研狗/金融狗/管理层
+    借钱/印钱
 
-[Demo](https://lemonjing.com/rich) （该Demo有更新，会与当前repo的内容略有不同。）
+注: 只是个体的花钱方式, 不包括理论实体的花钱方式
 
-欢迎Star。
+rnccshzydtq
+
+技术栈: react, Material UI
+
+
+# 一期工作
+花钱模块, 车,房, 淘宝网
 
 ## 截图
 
 ![主页](screenshots/main.jpg)![主页](screenshots/cart.jpg)
 
-## 如何使用
-
+## 本地部署
+npm v16
 ```
 npm install
 npm start
 ```
 
-## 如何修改商城物品
-
-1. 修改`src/goods.json`，用如下格式表示商品。
-
-```json
-{
-    "items":[
-        {
-            "name": "商品1",
-            "price": 100
-        },
-        {
-            "name": "商品2",
-            "price": 200
-        }
-    ]
-}
-```
 
 2. 如果增加商品，一定要在`src/static/images/items`中增加**与商品同名的jpg格式图片**，如“商品1.jpg”
 
-## 如何修改初始金额和余额宝利率
-
-修改`src/container/RichSimulator`的constructor的`this.money`和`this.yuebaorate`
 
 ## 如何修改外观
 
