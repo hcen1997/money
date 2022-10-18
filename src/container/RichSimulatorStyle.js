@@ -90,7 +90,8 @@ const RichSimulatorStyle = theme => ({
     flexGrow: 1,
   },
   price: {
-    color: theme.palette.primary.dark
+    color: theme.palette.primary.dark,
+    fontSize: 20
   },
   addButton: {
     width: 90,

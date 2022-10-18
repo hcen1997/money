@@ -30,15 +30,12 @@ class RichSimulator extends React.Component {
     super(props);
     const money = 1000000
 
-    this.items = require('../static/goods.json')['items'];
+    this.all_items = require('../static/goods.json')['items'];
+    this.items = this.all_items
     this.items.sort((a, b) => a.price - b.price)
     const itemsNumTmp = {};
     this.items.forEach(item => {
       itemsNumTmp[item.name] = 0;
-    });
-    let isDisplayTmp = {}
-    this.items.forEach(item => {
-      isDisplayTmp[item.name] = false;
     });
     this.state = {
       profitPerSec: 0,
@@ -47,15 +44,36 @@ class RichSimulator extends React.Component {
       tabValue: 0,
       balance: money,
       itemsNum: itemsNumTmp,
-      isDisplay: isDisplayTmp,
       count: 0,
-      isDrawerOpen: false
+      isDrawerOpen: false,
+      type : 'tbw'
     };
     this.nametoprice = {}
     this.delay = 1000
     this.items.forEach(item => {
       this.nametoprice[item.name] = item.price;
     });
+
+
+    // 过滤类型
+//    let new_items = []
+//    this.items.forEach(item => {
+//        if ( item["type"] !=undefined && item["type"] == this.state.type){
+//            new_items.push(item)
+//        }
+//    });
+//    this.items  = new_items
+    this.filter_type()
+  }
+
+  filter_type = () =>{
+    let new_items = []
+    this.all_items.forEach(item => {
+        if ( item["type"] !=undefined && item["type"] == this.state.type){
+            new_items.push(item)
+        }
+    });
+    this.items  = new_items
   }
 
   a11yProps = (index) => {
@@ -109,16 +127,8 @@ class RichSimulator extends React.Component {
     }
   }
   changeItem = (type_name) => {
-  console.log(type_name)
-//    this.setState({ isMakingProfit: event.target.checked })
-//    if (event.target.checked) {
-//      this.yuebaoInterval = setInterval(() => {
-//        // Your custom logic here
-//        this.makeProfit()
-//      }, this.delay);
-//    } else {
-//      clearInterval(this.yuebaoInterval)
-//    }
+        this.setState({ type : type_name })
+        this.filter_type()
   }
   makeProfit = () => {
     const pps = Math.floor(this.state.balance * 0.00000000079)
@@ -151,10 +161,10 @@ class RichSimulator extends React.Component {
             <List className={classes.shopList}>
 
               <ListSubheader component="div" id="nested-list-subheader">
-                我买的东西 - 花钱模拟器(lemonjing.com)
+                我买过的东西
           </ListSubheader>
               {
-                this.state.count === 0 ? <Typography className={classes.emptyLabel}>你的购物车空空如也</Typography> : null
+                this.state.count === 0 ? <Typography className={classes.emptyLabel}>从来没有买过东西</Typography> : null
               }
               {
                 this.items.map(item => (itemsNum[item.name] == 0 ? null :
@@ -190,7 +200,7 @@ class RichSimulator extends React.Component {
         <Grid container alignItems='center' justify='space-between' className={classes.appbar}>
           <Grid item>
             <Typography variant="h6" className={classes.balance}>
-              ￥{this.numberWithCommas(balance)}
+              钱包里余额  ￥{this.numberWithCommas(balance)}
             </Typography>
           </Grid>
           <Grid item>
@@ -198,7 +208,7 @@ class RichSimulator extends React.Component {
               <Badge badgeContent={this.state.count} color="secondary">
 
                 <Typography variant="body2" className={classes.balance}>
-                  购物车
+                  购买历史
                 </Typography>
               </Badge>
             </IconButton>
@@ -245,7 +255,7 @@ class RichSimulator extends React.Component {
             <Grid className={classes.cardGrid} container spacing={3}>
               {
                 this.items.map(item => (
-                  <Grid item key={item.name} xs={12} sm={6} md={4}>
+                  <Grid item key={item.name} xs={12} sm={6} md={3}>
                     <Card className={classes.card}>
                       <CardMedia
                         className={classes.cardMedia}
@@ -253,12 +263,13 @@ class RichSimulator extends React.Component {
                         title={item.name}
                       />
                       <CardContent className={classes.cardContent}>
-                        <Typography variant="h6" component="h2">
-                          {item.name}
-                        </Typography>
-                        <Typography className={classes.price}>
+                      <Typography className={classes.price}>
                           ￥<b>{item.price}</b>
                         </Typography>
+                        <Typography >
+                          {item.name}
+                        </Typography>
+
                       </CardContent>
                       <CardActions className={classes.cardActions}>
                         <TextField
@@ -267,7 +278,7 @@ class RichSimulator extends React.Component {
                           }}
                           id={item.name}
                           data-itemname={item.name}
-                          label="数量"
+                          label="已买数量"
                           type="number"
                           defaultValue='0'
                           className={classes.cardInput}
