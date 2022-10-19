@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
 import RichSimulator from './container/RichSimulator'
 import './App.css'
 
-const theme = createMuiTheme({
+const theme = createTheme({
   shadows: [
     '0px 0px 0px 0px red,0px 0px 0px 0px red,0px 0px 0px 0px red',
     '0px 0px 0px 0px red,0px 0px 0px 0px red,0px 0px 0px 0px red',
@@ -53,11 +53,11 @@ class App extends Component {
 
   render() {
     return (
-      <div >
+      <div>
         <ThemeProvider theme={theme}>
-          <RichSimulator></RichSimulator>
+          <RichSimulator/>
         </ThemeProvider>
-      </div >
+      </div>
     );
   }
 }
