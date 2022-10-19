@@ -24,17 +24,16 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import IconButton from '@material-ui/core/IconButton';
 
-
 class RichSimulator extends React.Component {
   constructor(props) {
     super(props);
     const money = 1000000
 
     this.all_items = require('../static/goods.json')['items'];
-    this.items = this.all_items
-    this.items.sort((a, b) => a.price - b.price)
+    // this.items = this.all_items
+    this.all_items.sort((a, b) => a.price - b.price)
     const itemsNumTmp = {};
-    this.items.forEach(item => {
+    this.all_items.forEach(item => {
       itemsNumTmp[item.name] = 0;
     });
     this.state = {
@@ -46,14 +45,14 @@ class RichSimulator extends React.Component {
       itemsNum: itemsNumTmp,
       count: 0,
       isDrawerOpen: false,
-      type : 'tbw'
+      type : 'tbw',
+      currentItem: []
     };
     this.nametoprice = {}
     this.delay = 1000
-    this.items.forEach(item => {
+    this.all_items.forEach(item => {
       this.nametoprice[item.name] = item.price;
     });
-
 
     // 过滤类型
 //    let new_items = []
@@ -63,19 +62,20 @@ class RichSimulator extends React.Component {
 //        }
 //    });
 //    this.items  = new_items
-    this.filter_type()
+    // this.filter_type()
   }
-
   filter_type = () =>{
     let new_items = []
     this.all_items.forEach(item => {
-        if ( item["type"] !=undefined && item["type"] == this.state.type){
-            new_items.push(item)
-        }
+      if(item["type"] !== undefined && item["type"] === this.state.type){
+        new_items.push(item)
+      }
     });
-    this.items  = new_items
+    // this.items = new_items
+    this.setState({
+      currentItem: new_items
+    })
   }
-
   a11yProps = (index) => {
     return {
       id: `simple-tab-${index}`,
@@ -126,13 +126,24 @@ class RichSimulator extends React.Component {
       clearInterval(this.yuebaoInterval)
     }
   }
+  setAsyncData = (type_name) => {
+    return new Promise(resolve => {
+      this.setState({ type : type_name })
+      resolve()
+    })
+  }
   changeItem = (type_name) => {
-        this.setState({ type : type_name })
-        this.filter_type()
+    this.setAsyncData(type_name).then(() => {
+      this.filter_type()
+    })
   }
   makeProfit = () => {
     const pps = Math.floor(this.state.balance * 0.00000000079)
-    this.setState({ balance: this.state.balance + pps, profitPerSec: pps, money: this.state.money + pps });
+    this.setState((state, props) => ({
+      balance: state.balance + pps,
+      profitPerSec: pps,
+      money: state.money + pps
+    }))
   }
 
   handleTabChange = (event, newValue) => {
@@ -145,29 +156,30 @@ class RichSimulator extends React.Component {
 
     this.setState({ isDrawerOpen: open })
   }
-
+  componentDidMount(){
+		this.filter_type();
+	}
   render() {
     const { isMakingProfit, profitPerSec, balance, itemsNum } = this.state;
     const { classes } = this.props;
     return (
-      <div className={classes.root} >
+      <div className={classes.root}>
         <SwipeableDrawer
           anchor="right"
           open={this.state.isDrawerOpen}
           onClose={this.toggleDrawer(false)}
           onOpen={this.toggleDrawer(true)}
         >
-          <Grid container justify="center">
+          <Grid container justifyContent="center">
             <List className={classes.shopList}>
-
               <ListSubheader component="div" id="nested-list-subheader">
                 我买过的东西
-          </ListSubheader>
+              </ListSubheader>
               {
                 this.state.count === 0 ? <Typography className={classes.emptyLabel}>从来没有买过东西</Typography> : null
               }
               {
-                this.items.map(item => (itemsNum[item.name] == 0 ? null :
+                this.state.currentItem.map(item => (itemsNum[item.name] == 0 ? null :
                   <ListItem key={item.name}>
                     <ListItemAvatar>
                       <Avatar src={require(`../static/images/items/${item.name}.jpg`)}></Avatar>
@@ -197,7 +209,7 @@ class RichSimulator extends React.Component {
           </Grid>
 
         </SwipeableDrawer>
-        <Grid container alignItems='center' justify='space-between' className={classes.appbar}>
+        <Grid container alignItems='center' justifyContent='space-between' className={classes.appbar}>
           <Grid item>
             <Typography variant="h6" className={classes.balance}>
               钱包里余额  ￥{this.numberWithCommas(balance)}
@@ -205,7 +217,7 @@ class RichSimulator extends React.Component {
           </Grid>
           <Grid item>
             <IconButton aria-label="cart" onClick={this.toggleDrawer(true)}>
-              <Badge badgeContent={this.state.count} color="secondary">
+              <Badge badgeContent={this.state.count}  overlap="rectangular" color="secondary">
 
                 <Typography variant="body2" className={classes.balance}>
                   购买历史
@@ -220,7 +232,7 @@ class RichSimulator extends React.Component {
         <main>
           <Container className={classes.container} maxWidth="md">
             <Paper className={classes.topPaper}>
-              <Grid container justify="center" alignItems="center">
+              <Grid container justifyContent="center" alignItems="center">
                 <Box className={classes.wordsWrapper}>
                   <Typography variant="h3" className={classes.largewords}>花钱模拟器</Typography>
                   <Typography className={classes.footerText}>如何花光这么多钱? bug还是天道? </Typography>
@@ -230,12 +242,12 @@ class RichSimulator extends React.Component {
               </Grid>
             </Paper>
             <Paper className={classes.yuebaoPaper}>
-            <Button variant="outlined" onClick={() => {    this.changeItem('tbw')  }}> 淘宝网</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button variant="outlined" onClick={() => {    this.changeItem('mc')  }}> 买车</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button variant="outlined" onClick={() => {    this.changeItem('mf')  }}> 买房</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button variant="outlined" onClick={() => {    this.changeItem('gxm')  }}> 搞项目</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button variant="outlined" onClick={() => {    this.changeItem('qqg')  }}> 全球购</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button variant="outlined" onClick={() => {    this.changeItem('hs')  }}> 黑市</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button variant="outlined" onClick={() => {this.changeItem('tbw')}}>淘宝网</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button variant="outlined" onClick={() => {this.changeItem('mc')}}>买车</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button variant="outlined" onClick={() => {this.changeItem('mf')}}>买房</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button variant="outlined" onClick={() => {this.changeItem('gxm')}}>搞项目</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button variant="outlined" onClick={() => {this.changeItem('qqg')}}>全球购</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button variant="outlined" onClick={() => {this.changeItem('hs')}}>黑市</Button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <FormControlLabel
                 className={classes.yuebaoLabel}
                 control={
@@ -247,15 +259,12 @@ class RichSimulator extends React.Component {
                 }
                 label="憋不住了, 赚钱"
               />
-
               {(isMakingProfit ? <span>每秒收益：{profitPerSec}元</span> : null)}
-
             </Paper>
-
             <Grid className={classes.cardGrid} container spacing={3}>
               {
-                this.items.map(item => (
-                  <Grid item key={item.name} xs={12} sm={6} md={3}>
+                this.state.currentItem.map((item,index) => (
+                  <Grid item key={index} xs={12} sm={6} md={3}>
                     <Card className={classes.card}>
                       <CardMedia
                         className={classes.cardMedia}
